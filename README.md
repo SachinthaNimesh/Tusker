@@ -1,5 +1,3 @@
-// README.md - Project documentation
-
 # MERN Task Manager
 
 A fullstack Task Management application built with the MERN stack (MongoDB, Express, React, Node.js).
