@@ -1,4 +1,4 @@
-# MERN Task Manager
+# TUSKER Task Manager
 
 A fullstack Task Management application built with the MERN stack (MongoDB, Express, React, Node.js).
 
