@@ -1,26 +1,25 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import SnackbarProvider from "./contexts/SnackbarContext";
 
-import Header from './components/Header';
-import Dashboard from './pages/Dashboard';
-import TaskDetail from './pages/TaskDetail';
-import NotFound from './pages/NotFound';
+import Header from "./components/Header";
+import Dashboard from "./pages/Dashboard";
+import TaskDetail from "./pages/TaskDetail";
+import NotFound from "./pages/NotFound";
 
 // Create a theme
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1976d2',
+      main: "#1976d2",
     },
     secondary: {
-      main: '#dc004e',
+      main: "#dc004e",
     },
     background: {
-      default: '#f5f5f5',
+      default: "#f5f5f5",
     },
   },
   typography: {
@@ -35,13 +34,14 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Header />
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/tasks/:id" element={<TaskDetail />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-      <ToastContainer position="bottom-right" />
+      <SnackbarProvider>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/tasks/:id" element={<TaskDetail />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </SnackbarProvider>
     </ThemeProvider>
   );
 }

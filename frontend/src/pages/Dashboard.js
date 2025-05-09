@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Container, 
-  Typography, 
-  Box, 
-  Grid, 
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  Container,
+  Typography,
+  Box,
+  Grid,
   Button,
   Dialog,
   DialogTitle,
@@ -13,77 +13,83 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
-} from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import { toast } from 'react-toastify';
-import axios from 'axios';
+  MenuItem,
+  Snackbar,
+  Alert,
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import axios from "axios";
 
-import TaskCard from '../components/TaskCard';
+import TaskCard from "../components/TaskCard";
 
-const API_URL = 'http://localhost:5000/api/tasks';
+const API_URL = "http://localhost:5001/api/tasks";
 
 const Dashboard = () => {
   const [tasks, setTasks] = useState([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    status: 'pending',
-    priority: 'medium'
+    title: "",
+    description: "",
+    status: "pending",
+    priority: "medium",
+  });
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
   });
 
-  useEffect(() => {
-    fetchTasks();
-  }, []);
-
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     setLoading(true);
     try {
       const response = await axios.get(API_URL);
       setTasks(response.data);
     } catch (error) {
-      toast.error('Failed to fetch tasks');
-      console.error('Error fetching tasks:', error);
+      showSnackbar("Failed to fetch tasks", "error");
+      console.error("Error fetching tasks:", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, []); // No dependencies since API_URL is constant
+
+  useEffect(() => {
+    fetchTasks();
+  }, [fetchTasks]);
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.title.trim()) {
-      toast.error('Title is required');
+      showSnackbar("Title is required", "error");
       return;
     }
 
     try {
       const response = await axios.post(API_URL, formData);
       setTasks([response.data, ...tasks]);
-      toast.success('Task created successfully');
+      showSnackbar("Task created successfully", "success");
       handleClose();
     } catch (error) {
-      toast.error('Failed to create task');
-      console.error('Error creating task:', error);
+      showSnackbar("Failed to create task", "error");
+      console.error("Error creating task:", error);
     }
   };
 
   const handleDelete = async (id) => {
     try {
       await axios.delete(`${API_URL}/${id}`);
-      setTasks(tasks.filter(task => task._id !== id));
-      toast.success('Task deleted successfully');
+      setTasks(tasks.filter((task) => task._id !== id));
+      showSnackbar("Task deleted successfully", "success");
     } catch (error) {
-      toast.error('Failed to delete task');
-      console.error('Error deleting task:', error);
+      showSnackbar("Failed to delete task", "error");
+      console.error("Error deleting task:", error);
     }
   };
 
@@ -94,22 +100,37 @@ const Dashboard = () => {
   const handleClose = () => {
     setOpen(false);
     setFormData({
-      title: '',
-      description: '',
-      status: 'pending',
-      priority: 'medium'
+      title: "",
+      description: "",
+      status: "pending",
+      priority: "medium",
     });
+  };
+
+  const showSnackbar = (message, severity) => {
+    setSnackbar({ open: true, message, severity });
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
 
   return (
     <Container maxWidth="lg">
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Box
+        sx={{
+          mb: 4,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         <Typography variant="h4" component="h1" gutterBottom>
           My Tasks
         </Typography>
-        <Button 
-          variant="contained" 
-          color="primary" 
+        <Button
+          variant="contained"
+          color="primary"
           startIcon={<AddIcon />}
           onClick={handleOpen}
         >
@@ -128,14 +149,16 @@ const Dashboard = () => {
           ))}
         </Grid>
       ) : (
-        <Box sx={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          alignItems: 'center', 
-          justifyContent: 'center',
-          height: '50vh',
-          textAlign: 'center'
-        }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "50vh",
+            textAlign: "center",
+          }}
+        >
           <Typography variant="h6" color="textSecondary" gutterBottom>
             No tasks found
           </Typography>
@@ -216,11 +239,30 @@ const Dashboard = () => {
             </Grid>
           </DialogContent>
           <DialogActions sx={{ px: 3, pb: 2 }}>
-            <Button onClick={handleClose} color="inherit">Cancel</Button>
-            <Button type="submit" variant="contained">Add Task</Button>
+            <Button onClick={handleClose} color="inherit">
+              Cancel
+            </Button>
+            <Button type="submit" variant="contained">
+              Add Task
+            </Button>
           </DialogActions>
         </form>
       </Dialog>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };

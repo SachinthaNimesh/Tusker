@@ -1,19 +1,22 @@
-import React from 'react';
-import { Container, Typography, Box, Button } from '@mui/material';
-import { Link } from 'react-router-dom';
-import HomeIcon from '@mui/icons-material/Home';
+import React from "react";
+import { Container, Typography, Box, Button } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
+import HomeIcon from "@mui/icons-material/Home";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const NotFound = () => {
+  const navigate = useNavigate();
+
   return (
     <Container maxWidth="sm">
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '70vh',
-          textAlign: 'center',
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "70vh",
+          textAlign: "center",
         }}
       >
         <Typography variant="h1" component="h1" gutterBottom>
@@ -33,6 +36,14 @@ const NotFound = () => {
           sx={{ mt: 2 }}
         >
           Back to Home
+        </Button>
+        <Button
+          onClick={() => navigate(-1)}
+          variant="outlined"
+          startIcon={<ArrowBackIcon />}
+          sx={{ mt: 2 }}
+        >
+          Go Back
         </Button>
       </Box>
     </Container>

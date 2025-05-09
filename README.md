@@ -35,7 +35,7 @@ A fullstack Task Management application built with the MERN stack (MongoDB, Expr
 3. Create a `.env` file with your MongoDB connection string:
 
    ```
-   PORT=5000
+   PORT=5001 #5000
    MONGO_URI=your_mongodb_connection_string
    ```
 
