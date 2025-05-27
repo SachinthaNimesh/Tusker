@@ -136,3 +136,4 @@ components:
           type: string
           format: date-time
           description: The date and time when the task was created
+          readOnly: true
