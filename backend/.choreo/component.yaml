@@ -3,7 +3,7 @@ endpoints:
   - name: tusker_app
     displayName: Tusker API
     service:
-      basePath: /
+      basePath: /api/tasks/
       port: 8080
     type: REST
     networkVisibilities:
