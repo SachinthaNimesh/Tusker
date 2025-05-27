@@ -1,0 +1,138 @@
+openapi: 3.0.0
+info:
+  title: Tusker API
+  description: API for managing tasks in the Tusker application
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+tags:
+  - name: Tasks
+    description: Operations related to tasks
+
+paths:
+  /:
+    get:
+      summary: Get all tasks
+      responses:
+        "200":
+          description: A list of tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Tasks"
+    post:
+      summary: Create a new task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Tasks"
+      responses:
+        "201":
+          description: Task created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tasks"
+        "400":
+          description: Invalid input
+
+  /{id}:
+    get:
+      summary: Get a single task
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: A single task
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tasks"
+        "404":
+          description: Task not found
+    patch:
+      summary: Update a task
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Tasks"
+      responses:
+        "200":
+          description: Task updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Tasks"
+        "400":
+          description: Invalid input
+        "404":
+          description: Task not found
+    delete:
+      summary: Delete a task
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Task deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "404":
+          description: Task not found
+
+components:
+  schemas:
+    Tasks:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The title of the task
+        description:
+          type: string
+          description: The description of the task
+        status:
+          type: string
+          description: The status of the task
+          enum:
+            - pending
+            - in-progress
+            - completed
+          default: pending
+        priority:
+          type: string
+          description: The priority of the task
+          enum:
+            - low
+            - medium
+            - high
+          default: medium
+        createdAt:
+          type: string
+          format: date-time
+          description: The date and time when the task was created
